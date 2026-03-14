@@ -1,0 +1,18 @@
+# Large files
+*.log
+*.log.*
+
+# Data
+data/
+*.db
+*.sqlite
+
+# Cache
+__pycache__/
+*.pyc
+
+# Memory
+memory/
+
+# Docs
+!README.md
