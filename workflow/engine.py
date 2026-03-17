@@ -25,8 +25,8 @@ class StepStatus(Enum):
 @dataclass
 class WorkflowStep:
     """工作流步骤"""
-    id: str
-    name: str
+    id: str = ""
+    name: str = ""
     description: str = ""
     action: Any = None
     handler: Callable = None
@@ -43,6 +43,8 @@ class WorkflowStep:
     def __post_init__(self):
         if not self.id:
             self.id = str(uuid.uuid4())[:8]
+        if not self.name:
+            self.name = f"step_{self.id}"
 
 @dataclass
 class WorkflowContext:
@@ -56,8 +58,8 @@ class WorkflowContext:
 @dataclass
 class Workflow:
     """工作流定义"""
-    id: str
-    name: str
+    id: str = ""
+    name: str = ""
     description: str = ""
     steps: List[WorkflowStep] = field(default_factory=list)
     status: WorkflowStatus = WorkflowStatus.PENDING
@@ -73,6 +75,10 @@ class Workflow:
             self.id = str(uuid.uuid4())[:8]
         if not self.context:
             self.context = WorkflowContext(workflow_id=self.id)
+
+    def add_step(self, step: WorkflowStep):
+        """添加步骤"""
+        self.steps.append(step)
 
 class WorkflowRegistry:
     """工作流注册表"""
