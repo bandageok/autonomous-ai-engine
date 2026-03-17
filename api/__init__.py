@@ -1,4 +1,4 @@
 """API Module"""
-from .server import APIServer, Request, Response
+from .fastapi_server import app
 
-__all__ = ['APIServer', 'Request', 'Response']
+__all__ = ['app']

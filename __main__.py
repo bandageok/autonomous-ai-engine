@@ -64,15 +64,12 @@ def start_api_server(host: str, port: int):
     """启动API服务器"""
     print(f"Starting API server on {host}:{port}...")
     try:
-        from api.server import APIServer
-        from api.routes import create_routes
-        
-        server = APIServer(host=host, port=port)
-        create_routes(server)
-        asyncio.run(server.start())
+        import uvicorn
+        from api.fastapi_server import app
+        uvicorn.run(app, host=host, port=port)
     except ImportError as e:
         print(f"Error: {e}")
-        print("Please install required packages: pip install aiohttp")
+        print("Please install: pip install fastapi uvicorn")
 
 
 def start_webui(port: int, api_base: str):
