@@ -13,6 +13,7 @@ sqlite3 (built-in)
 
 ## Vector Store
 numpy>=1.24.0
+faiss-cpu>=1.7.0
 
 ## Utilities
 python-dotenv>=1.0.0
