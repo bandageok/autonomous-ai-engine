@@ -190,4 +190,47 @@ ec5bbf2 Refactor: 架构优化 - 统一模块入口
 
 ---
 
+## 2026-03-17 优化 v0.1.3
+
+### 新增
+
+| 项目 | 说明 |
+|------|------|
+| **CLI入口** | `__main__.py` 命令行工具 |
+| **单元测试** | 31个测试全部通过 |
+
+### CLI 使用方法
+
+```bash
+# 运行智能体
+python __main__.py run --prompt "分析这段代码..."
+
+# 管理智能体
+python __main__.py agent --name test --action create
+
+# 查看配置
+python __main__.py config --show
+
+# 启动API服务
+python __main__.py serve --port 8000
+```
+
+### 测试结果
+```
+============================= test session starts =============================
+31 passed in 0.26s
+=============================
+```
+
+### Git 提交记录 (续)
+
+```
+41d34eb Add: CLI entry point (__main__.py)
+bffd2be Enhance: Fix utils/rag modules + Add 31 unit tests
+9a09e64 Fix: Indentation errors in agent module + Add 19 unit tests
+75e450d Docs: Update optimization report
+```
+
+---
+
 *由 AI 自动生成并推送*
