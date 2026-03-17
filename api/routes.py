@@ -1,15 +1,44 @@
 """API Routes - 完整的API路由实现"""
 import sys
 import os
+import json
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from datetime import datetime
 from typing import Dict, Any
 
+# 数据目录
+DATA_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+TASKS_FILE = os.path.join(DATA_DIR, "tasks.json")
+
 # 存储
 _agents = {}
 _memory_stores = {}
 _task_history = []
+
+# 加载历史记录
+def load_tasks():
+    """从文件加载任务历史"""
+    global _task_history
+    try:
+        if os.path.exists(TASKS_FILE):
+            with open(TASKS_FILE, 'r', encoding='utf-8') as f:
+                _task_history = json.load(f)
+    except Exception:
+        _task_history = []
+
+# 保存历史记录
+def save_tasks():
+    """保存任务历史到文件"""
+    try:
+        with open(TASKS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(_task_history[-1000:], f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"保存任务失败: {e}")
+
+# 启动时加载
+load_tasks()
 
 
 def create_routes(server):
@@ -95,6 +124,9 @@ def create_routes(server):
             "result": result,
             "timestamp": datetime.now().isoformat()
         })
+        
+        # 保存到文件
+        save_tasks()
         
         return {
             "agent": name,
@@ -214,6 +246,7 @@ def create_routes(server):
     async def clear_tasks(request):
         """清空任务历史"""
         _task_history.clear()
+        save_tasks()
         return {"status": "cleared"}
     
     # ==================== Config ====================
