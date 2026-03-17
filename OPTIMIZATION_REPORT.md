@@ -144,4 +144,50 @@ from rag import VectorStore
 
 ---
 
+## 2026-03-17 优化 v0.1.2
+
+### 新增
+
+| 项目 | 说明 |
+|------|------|
+| **单元测试** | 19个测试全部通过 |
+| **tests/** | 测试目录 |
+
+### 测试覆盖
+
+```
+tests/
+├── test_agent.py    # 5 tests - AgentCore, Task
+├── test_memory.py   # 7 tests - MemoryStore, MemoryItem
+├── test_llm.py      # 4 tests - OllamaLLM, BaseLLM
+└── test_db.py       # 3 tests - Database, QueryBuilder
+```
+
+### 修复的问题
+
+| 问题 | 修复 |
+|------|------|
+| agent模块语法错误 | 修复了 agent_core.py, memory_system.py, task_planner.py 的缩进问题 |
+| 测试导入错误 | 修复 Database 期望 Path 对象而非字符串 |
+
+### 测试结果
+```
+============================= test session starts =============================
+19 passed in 0.19s
+=============================
+```
+
+---
+
+### Git 提交记录 (续)
+
+```
+9a09e64 Fix: Indentation errors in agent module + Add 19 unit tests
+6808afe Docs: Add optimization report
+983955e Add: pyproject.toml for modern Python package management
+ec5bbf2 Refactor: 架构优化 - 统一模块入口
+```
+
+---
+
 *由 AI 自动生成并推送*
