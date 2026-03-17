@@ -7,60 +7,78 @@
 ## 概述
 完全自主的AI引擎系统，具备自我学习、代码生成、任务规划能力。每日自动从技术趋势中学习并生成高质量代码。
 
+## 架构
+
+```
+autonomous-ai-engine/
+├── agent/          # 智能体实现 (TaskAgent, Memory, Planner)
+├── api/            # RESTful API服务
+├── cache/          # LRU缓存
+├── context/        # 上下文管理
+├── core/           # 核心模块 (重新导出层)
+├── db/             # SQLite数据库
+├── evaluation/     # 评估系统
+├── evolve/         # 自我进化引擎
+├── llm/            # LLM模型管理
+├── mcp/            # MCP协议
+├── monitoring/     # 监控指标
+├── multiagent/     # 多智能体系统
+├── rag/            # RAG向量检索
+├── reasoning/      # 思维链推理
+├── sandbox/        # 沙箱执行
+├── scheduler/      # 任务调度
+├── security/       # 安全分析
+├── skills/         # 技能系统
+├── tools/          # 工具注册
+├── utils/          # 工具函数
+├── validation/     # 验证系统
+├── webhooks/       # Webhook处理
+└── workflow/       # 工作流引擎
+```
+
 ## 核心模块
 
-| 模块 | 描述 | 行数 |
-|------|------|------|
-| `core/` | AI引擎核心 | ~800 |
-| `agent/` | 自主智能体 | ~400 |
-| `llm/` | LLM模型管理 | ~400 |
-| `rag/` | RAG向量检索 | ~400 |
-| `api/` | API服务器 | ~150 |
-| `db/` | 数据库操作 | ~150 |
-| `scheduler/` | 任务调度 | ~100 |
-| `monitoring/` | 监控指标 | ~150 |
-| `webhooks/` | Webhook处理 | ~60 |
-| `cache/` | LRU缓存 | ~80 |
+| 模块 | 描述 |
+|------|------|
+| `agent/` | 自主智能体核心实现 |
+| `core/` | 核心模块入口 (重新导出 agent) |
+| `llm/` | Ollama LLM 管理 |
+| `rag/` | 向量检索 + RAG |
+| `api/` | FastAPI 服务器 |
+| `db/` | SQLite 持久化 |
+| `evolve/` | 自我进化与代码修复 |
+| `reasoning/` | 思维链推理 (CoT, ToT, ReAct) |
 
-**当前代码行数: 2388+**
+## 安装
 
-## 目标
-万行代码级别的自主AI系统
+```bash
+pip install -r requirements.txt
 
-## 技术栈
-- Python 3.10+
-- Ollama (本地LLM)
-- MCP Protocol
-- Vector Database
+# 安装 Ollama
+# 参考: https://github.com/ollama/ollama
 
-## 功能特性
-- 🤖 自主任务规划与执行
-- 📚 持续学习与知识积累
-- 🔧 自动化代码生成
-- 📊 性能监控与优化
-- 🌐 RESTful API服务
-- 📡 Webhook集成
-- 💾 持久化存储
-- ⚡ 任务调度
+# 拉取模型
+ollama pull qwen3:8b
+ollama pull nomic-embed-text
+```
 
 ## 快速开始
 
 ```python
-from core.engine import AIEngine
-from api.server import APIServer
-from scheduler import TaskScheduler
+from agent import AgentCore
+from llm import OllamaProvider
 
-# 初始化引擎
-engine = AIEngine()
+# 初始化
+agent = AgentCore("assistant")
+provider = OllamaProvider(model="qwen3:8b")
+agent.set_llm_provider(provider)
 
-# 启动API服务
-server = APIServer(port=8000)
-await server.start()
-
-# 启动调度器
-scheduler = TaskScheduler()
-await scheduler.run()
+# 运行
+result = await agent.think("分析这段代码...")
 ```
+
+## 当前代码行数
+**10,000+** 行
 
 ## 许可证
 MIT

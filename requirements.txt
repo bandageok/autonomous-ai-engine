@@ -1,0 +1,30 @@
+# Autonomous AI Engine Dependencies
+
+## Core
+aiohttp>=3.9.0
+asyncio>=3.4.3
+
+## Database
+sqlite3 (built-in)
+
+## LLM & Embeddings
+# Ollama (installed separately)
+# nomic-embed-text (for embeddings)
+
+## Vector Store
+numpy>=1.24.0
+
+## Utilities
+python-dotenv>=1.0.0
+pydantic>=2.0.0
+
+## Monitoring
+psutil>=5.9.0
+
+## Web
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+## Testing (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
