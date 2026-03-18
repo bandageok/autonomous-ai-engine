@@ -178,3 +178,154 @@ def get_registry() -> SkillRegistry:
 def get_executor() -> SkillExecutor:
     """获取全局执行器"""
     return SkillExecutor(_global_registry)
+
+```python
+import asyncio
+import importlib
+import inspect
+import os
+import sys
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Generic,
+    List,
+    Optional,
+    Sequence,
+    Set,
+    Tuple,
+    Type,
+    TypeVar,
+    Union,
+)
+
+class SkillException(Exception):
+    """Base exception class for skill system errors"""
+    pass
+
+class Skill(Generic[Type]):
+    """
+    Base class for all skills in the agent system.
+    
+    Attributes:
+        name: Unique identifier for the skill
+        version: Version number of the skill
+        dependencies: Set of required skills
+        description: Human-readable description
+        parameters: Dictionary of required parameters
+    """
+    def __init__(self, name: str, version: str, dependencies: Set[str], 
+                 description: str, parameters: Dict[str, Any]):
+        self.name = name
+        self.version = version
+        self.dependencies = dependencies
+        self.description = description
+        self.parameters = parameters
+        
+    async def execute(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Execute the skill with given parameters.
+        
+        Args:
+            params: Dictionary of parameters required by the skill
+            
+        Returns:
+            Dictionary containing the result of the skill execution
+            
+        Raises:
+            SkillException: If the skill execution fails
+        """
+        raise NotImplementedError("Subclasses must implement execute()")
+
+class SkillRegistry:
+    """
+    Central registry for managing all registered skills.
+    
+    Attributes:
+        skills: Dictionary mapping skill names to Skill instances
+    """
+    def __init__(self):
+        self.skills: Dict[str, Skill] = {}
+        
+    def register(self, skill: Skill) -> None:
+        """
+        Register a new skill with the registry.
+        
+        Args:
+            skill: Skill instance to register
+            
+        Raises:
+            SkillException: If the skill name already exists
+        """
+        if skill.name in self.skills:
+            raise SkillException(f"Skill '{skill.name}' already registered")
+        self.skills[skill.name] = skill
+        
+    def get(self, name: str) -> Optional[Skill]:
+        """Retrieve a skill by name"""
+        return self.skills.get(name)
+
+class SkillLoader:
+    """
+    Loads skill modules dynamically from specified paths.
+    
+    Attributes:
+        registry: SkillRegistry instance to register loaded skills
+        paths: List of directories to search for skill modules
+    """
+    def __init__(self, registry: SkillRegistry, paths: List[str]):
+        self.registry = registry
+        self.paths = paths
+        
+    def load(self) -> None:
+        """
+        Load all skill modules from registered paths.
+        
+        Raises:
+            SkillException: If module loading fails
+        """
+        for path in self.paths:
+            if not os.path.exists(path):
+                continue
+            for filename in os.listdir(path):
+                if filename.endswith('.py') and filename != '__init__.py':
+                    module_name = filename[:-3]
+                    try:
+                        module = importlib.import_module(f"{path}.{module_name}")
+                        for name, obj in inspect.getmembers(module):
+                            if inspect.isclass(obj) and issubclass(obj, Skill) and obj != Skill:
+                                self.registry.register(obj())
+                    except Exception as e:
+                        raise SkillException(f"Failed to load module {path}.{module_name}: {str(e)}")
+
+class SkillExecutor:
+    """
+    Executes skills in a sandboxed environment with dependency checking.
+    
+    Attributes:
+        registry: SkillRegistry instance to check dependencies
+        sandbox: Boolean indicating if execution should be sandboxed
+    """
+    def __init__(self, registry: SkillRegistry, sandbox: bool = True):
+        self.registry = registry
+        self.sandbox = sandbox
+        
+    async def run(self, skill_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Execute a skill with given parameters.
+        
+        Args:
+            skill_name: Name of the skill to execute
+            params: Dictionary of parameters for the skill
+            
+        Returns:
+            Dictionary containing the result of the skill execution
+            
+        Raises:
+            SkillException: If skill execution fails
+        """
+        skill = self.registry.get(skill_name)
+        if not skill:
+            raise Skill
+```
